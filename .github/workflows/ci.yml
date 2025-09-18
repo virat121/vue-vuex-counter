@@ -1,4 +1,4 @@
-name: Vue.js CI
+name: Vue.js CI/CD
 
 on:
   push:
@@ -7,28 +7,35 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-lint:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
+      # 1️⃣ Checkout repo
       - name: Checkout source
         uses: actions/checkout@v3
 
-      # Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'   # Vue CLI 5 works well with Node 16 or 18
+          node-version: '18'
 
-      # Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Run lint (skip gracefully if no lint script)
+      # 4️⃣ Run lint
       - name: Run lint
         run: npm run lint --if-present
 
-      # Run build (Vue CLI build)
+      # 5️⃣ Build project
       - name: Build project
         run: npm run build
+
+      # 6️⃣ Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
